@@ -31,9 +31,9 @@ class Quiz extends React.Component {
       case Quiz.STEP_WAITING:
         return <WaitingScreen />;
       case Quiz.STEP_READY:
-        return <ReadyScreen />;
+        return <ReadyScreen onJoin={this.props.onJoin} />;
       case Quiz.STEP_STARTED:
-        return <QuestionScreen />;
+        return <QuestionScreen question={this.props.questions[0]} />;
       case Quiz.STEP_ENDED:
         return <EndedScreen />;
     }

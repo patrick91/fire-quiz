@@ -17,7 +17,7 @@ class ReadyScreen extends Component {
           The game is ready!
         </MessageBox>
 
-        <Button>Join!</Button>
+        <Button onClick={this.props.onJoin}>Join!</Button>
       </Wrapper>
     );
   }

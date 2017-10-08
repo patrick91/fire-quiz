@@ -19,6 +19,12 @@ const QuestionTitle = styled.div`
 
 class QuestionScreen extends Component {
   render() {
+    const { question } = this.props;
+
+    if (!question) {
+      return null;
+    }
+
     return (
       <Wrapper>
         <QuestionTitle
@@ -26,15 +32,14 @@ class QuestionScreen extends Component {
             marginBottom: "2rem"
           }}
         >
-          <strong>Question:</strong>{" "}
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae, culpa
-          ea.
+          <strong>Question:</strong> {question.title}
         </QuestionTitle>
 
-        <Button inverted style={{ marginBottom: "2rem" }}>Answer A!</Button>
-        <Button inverted style={{ marginBottom: "2rem" }}>Answer B!</Button>
-        <Button inverted style={{ marginBottom: "2rem" }}>Answer C!</Button>
-        <Button inverted>Answer D!</Button>
+        {question.answers.map(answer => (
+          <Button inverted key={answer} style={{ marginBottom: "2rem" }}>
+            {answer}
+          </Button>
+        ))}
       </Wrapper>
     );
   }
