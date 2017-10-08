@@ -15,7 +15,8 @@ const db = firebase.firestore();
 class FirebaseQuiz extends Component {
   state = {
     step: Quiz.STEP_WAITING,
-    questions: []
+    questions: [],
+    joined: false
   };
 
   componentDidMount() {
@@ -39,26 +40,30 @@ class FirebaseQuiz extends Component {
 
   fetchData() {
     // TODO: ideally this should not be hardcoded
-    const quiz = db.collection("quizzes").doc("1FJBgjiZ8PufCURPkGx4");
+    this.quiz = db.collection("quizzes").doc("1FJBgjiZ8PufCURPkGx4");
 
-    quiz.onSnapshot(doc => {
+    this.quiz.onSnapshot(doc => {
       this.updateQuizData(doc.data());
     });
 
-    quiz
+    this.quiz
       .collection("questions")
       .onSnapshot(data => this.updateQuizQuestion(data));
+
+    this.quiz
+      .collection("users")
+      .doc(this.state.userId)
+      .onSnapshot(data => this.updateUserStatus(data));
   }
 
   updateQuizData(data) {
-    if (data.ready) {
-      this.setState({
-        step: Quiz.STEP_READY
-      });
-    } else {
-      this.setState({
-        step: Quiz.STEP_WAITING
-      });
+    if (data) {
+      this.setState(
+        {
+          quiz: data
+        },
+        this.updateQuizStep
+      );
     }
   }
 
@@ -67,17 +72,57 @@ class FirebaseQuiz extends Component {
 
     data.docs.forEach(doc => questions.push(doc.data()));
 
-    this.setState({ questions });
+    this.setState({ questions }, this.updateQuizStep);
   }
 
   handleOnJoin() {
-    // TODO: add current user in quiz' users
-    // quiz.collection("users");
+    this.quiz
+      .collection("users")
+      .doc(this.state.userId)
+      .set({
+        name: "that is a random name"
+      });
+  }
+
+  updateUserStatus(data) {
+    let joined = false;
+
+    if (data.exists) {
+      joined = true;
+    }
+
+    this.setState(
+      {
+        joined
+      },
+      this.updateQuizStep
+    );
+  }
+
+  updateQuizStep() {
+    if (!this.state.quiz) {
+      this.setState({
+        step: Quiz.STEP_WAITING
+      });
+    } else if (!this.state.quiz.ready) {
+      this.setState({
+        step: Quiz.STEP_WAITING
+      });
+    } else if (!this.state.joined) {
+      this.setState({
+        step: Quiz.STEP_READY
+      });
+    } else if (this.state.joined) {
+      this.setState({
+        step: Quiz.STEP_STARTED
+      });
+    }
   }
 
   render() {
     return this.props.render({
-      ...this.state,
+      questions: this.state.questions,
+      step: this.state.step,
       onJoin: () => this.handleOnJoin()
     });
   }
