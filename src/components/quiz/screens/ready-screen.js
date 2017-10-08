@@ -9,7 +9,13 @@ class ReadyScreen extends Component {
   render() {
     return (
       <Wrapper>
-        <MessageBox>The game is ready!</MessageBox>
+        <MessageBox
+          style={{
+            marginBottom: "2rem"
+          }}
+        >
+          The game is ready!
+        </MessageBox>
 
         <Button>Join!</Button>
       </Wrapper>

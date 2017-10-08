@@ -2,10 +2,10 @@ import React from "react";
 
 import styled from "styled-components";
 
-import Question from "../question";
-
 import WaitingScreen from "./screens/waiting-screen";
 import ReadyScreen from "./screens/ready-screen";
+import QuestionScreen from "./screens/question-screen";
+import EndedScreen from "./screens/ended-screen";
 
 import pattern from "./assets/pattern.svg";
 
@@ -25,23 +25,6 @@ class Quiz extends React.Component {
   static STEP_STARTED = 2;
   static STEP_ENDED = 3;
 
-  renderReady() {
-    return (
-      <div>
-        A quiz is ready, do you want to join?
-        <button>Join!</button>
-      </div>
-    );
-  }
-
-  renderStarted() {
-    return <Question />;
-  }
-
-  renderEnded() {
-    return <div>wohoo, the quiz has ended!</div>;
-  }
-
   renderCurrentStep() {
     switch (this.props.step) {
       default:
@@ -50,9 +33,9 @@ class Quiz extends React.Component {
       case Quiz.STEP_READY:
         return <ReadyScreen />;
       case Quiz.STEP_STARTED:
-        return this.renderStarted();
+        return <QuestionScreen />;
       case Quiz.STEP_ENDED:
-        return this.renderEnded();
+        return <EndedScreen />;
     }
   }
 
